@@ -136,8 +136,18 @@ namespace AltV.Net.Async.Elements.Entities
                 }
             }
         }
-        
-        public List<StreamedEntityDistance> StreamedEntityDistances => GetStreamedEntities();
+
+        public List<StreamedEntityDistance> StreamedEntities
+        {
+            get
+            {
+                lock (Player)
+                {
+                    if (!AsyncContext.CheckIfExistsOrCachedNullable(Player)) return default;
+                    return Player.StreamedEntities;
+                }
+            }
+        }
 
         public ushort Health
         {
@@ -953,24 +963,6 @@ namespace AltV.Net.Async.Elements.Entities
             {
                 if (!AsyncContext.CheckIfExistsNullable(Player)) return default;
                 return Player.GetWeapons();
-            }
-        }
-
-        public uint GetStreamedEntitiesCount()
-        {
-            lock (Player)
-            {
-                if (!AsyncContext.CheckIfExistsNullable(Player)) return default;
-                return Player.GetStreamedEntitiesCount();
-            }
-        }
-
-        public List<StreamedEntityDistance> GetStreamedEntities()
-        {
-            lock (Player)
-            {
-                if (!AsyncContext.CheckIfExistsNullable(Player)) return default;
-                return Player.GetStreamedEntities();
             }
         }
 

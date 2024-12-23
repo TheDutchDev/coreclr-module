@@ -43,7 +43,7 @@ namespace AltV.Net.Elements.Entities
 
         long DiscordId { get; }
 
-        List<StreamedEntityDistance> StreamedEntityDistances { get; }
+        List<StreamedEntityDistance> StreamedEntities { get; }
 
         /// <summary>
         /// Gets and Sets the players health
@@ -255,18 +255,6 @@ namespace AltV.Net.Elements.Entities
         /// </summary>
         /// <returns></returns>
         WeaponData[] GetWeapons();
-
-        /// <summary>
-        /// Returns the amount of streamed entities
-        /// </summary>
-        /// <returns></returns>
-        uint GetStreamedEntitiesCount();
-
-        /// <summary>
-        /// Returns a list of streamed entities
-        /// </summary>
-        /// <returns></returns>
-        List<StreamedEntityDistance> GetStreamedEntities();
 
         /// <summary>
         /// Clears the blood damage of the player

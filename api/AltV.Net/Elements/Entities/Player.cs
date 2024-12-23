@@ -579,7 +579,36 @@ namespace AltV.Net.Elements.Entities
             }
         }
 
-        public List<StreamedEntityDistance> StreamedEntityDistances => GetStreamedEntities();
+        public List<StreamedEntityDistance> StreamedEntities
+        {
+            get
+            {
+                unsafe
+                {
+                    CheckIfEntityExistsOrCached();
+
+                    var entitiesCount = Core.Library.Server.Player_GetStreamedEntitiesCount(PlayerNativePointer);
+                
+                    var pointers = IntPtr.Zero;
+                    var distances = new ushort[entitiesCount];
+                    var types = new byte[entitiesCount];
+                    Core.Library.Server.Player_GetStreamedEntities(PlayerNativePointer, &pointers, types, distances, entitiesCount);
+
+                    var entityPtrArray = new IntPtr[entitiesCount];
+                    Marshal.Copy(pointers, entityPtrArray, 0, (int) entitiesCount);
+                    Core.Library.Shared.FreeVoidPointerArray(pointers);
+                
+                    var streamedEntities = new List<StreamedEntityDistance>((int) entitiesCount);
+                    for (ulong i = 0; i < entitiesCount; i++)
+                    {
+                        var entity = (IEntity) Core.PoolManager.GetOrCreate(Core, entityPtrArray[i], (BaseObjectType) types[i]);
+                        streamedEntities.Add(new StreamedEntityDistance(entity, distances[i]));
+                    }
+
+                    return streamedEntities;
+                }
+            }
+        }
 
         public ushort Health
         {
@@ -1256,43 +1285,6 @@ namespace AltV.Net.Elements.Entities
                 Core.Library.Shared.FreeWeaponTArray(weaponsPtr, size);
 
                 return arr;
-            }
-        }
-
-        public uint GetStreamedEntitiesCount()
-        {
-            unsafe
-            {
-                CheckIfEntityExists();
-                return Core.Library.Server.Player_GetStreamedEntitiesCount(PlayerNativePointer);
-            }
-        }
-        
-        public List<StreamedEntityDistance> GetStreamedEntities()
-        {
-            unsafe
-            {
-                CheckIfEntityExists();
-
-                var entitiesCount = Core.Library.Server.Player_GetStreamedEntitiesCount(PlayerNativePointer);
-                
-                var pointers = IntPtr.Zero;
-                var distances = new ushort[entitiesCount];
-                var types = new byte[entitiesCount];
-                Core.Library.Server.Player_GetStreamedEntities(PlayerNativePointer, &pointers, distances, types, entitiesCount);
-
-                var entityPtrArray = new IntPtr[entitiesCount];
-                Marshal.Copy(pointers, entityPtrArray, 0, (int) entitiesCount);
-                Core.Library.Shared.FreeVoidPointerArray(pointers);
-                
-                var streamedEntities = new List<StreamedEntityDistance>((int) entitiesCount);
-                for (ulong i = 0; i < entitiesCount; i++)
-                {
-                    var entity = (IEntity) Core.PoolManager.GetOrCreate(Core, entityPtrArray[i], (BaseObjectType) types[i]);
-                    streamedEntities.Add(new StreamedEntityDistance(entity, distances[i]));
-                }
-
-                return streamedEntities;
             }
         }
 
