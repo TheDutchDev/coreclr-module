@@ -219,5 +219,6 @@ public static class TypeRegistry
         { "ClrAmmoFlags*", "nint" },
         { "ClrDecoration**", "nint" },
         { "aabb_t&", "AABB*" },
+        { "uint16_t[]", "ushort[]" },
     };
 }

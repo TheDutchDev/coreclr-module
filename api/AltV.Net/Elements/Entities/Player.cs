@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using AltV.Net.CApi;
 using AltV.Net.Data;
 using AltV.Net.Elements.Args;
+using AltV.Net.Elements.Pools;
 using AltV.Net.Enums;
 using AltV.Net.Shared.Elements.Entities;
 using AltV.Net.Shared.Utils;
@@ -575,6 +578,8 @@ namespace AltV.Net.Elements.Entities
                 }
             }
         }
+
+        public List<StreamedEntityDistance> StreamedEntityDistances => GetStreamedEntities();
 
         public ushort Health
         {
@@ -1251,6 +1256,43 @@ namespace AltV.Net.Elements.Entities
                 Core.Library.Shared.FreeWeaponTArray(weaponsPtr, size);
 
                 return arr;
+            }
+        }
+
+        public uint GetStreamedEntitiesCount()
+        {
+            unsafe
+            {
+                CheckIfEntityExists();
+                return Core.Library.Server.Player_GetStreamedEntitiesCount(PlayerNativePointer);
+            }
+        }
+        
+        public List<StreamedEntityDistance> GetStreamedEntities()
+        {
+            unsafe
+            {
+                CheckIfEntityExists();
+
+                var entitiesCount = Core.Library.Server.Player_GetStreamedEntitiesCount(PlayerNativePointer);
+                
+                var pointers = IntPtr.Zero;
+                var distances = new ushort[entitiesCount];
+                var types = new byte[entitiesCount];
+                Core.Library.Server.Player_GetStreamedEntities(PlayerNativePointer, &pointers, distances, types, entitiesCount);
+
+                var entityPtrArray = new IntPtr[entitiesCount];
+                Marshal.Copy(pointers, entityPtrArray, 0, (int) entitiesCount);
+                Core.Library.Shared.FreeVoidPointerArray(pointers);
+                
+                var streamedEntities = new List<StreamedEntityDistance>((int) entitiesCount);
+                for (ulong i = 0; i < entitiesCount; i++)
+                {
+                    var entity = (IEntity) Core.PoolManager.GetOrCreate(Core, entityPtrArray[i], (BaseObjectType) types[i]);
+                    streamedEntities.Add(new StreamedEntityDistance(entity, distances[i]));
+                }
+
+                return streamedEntities;
             }
         }
 

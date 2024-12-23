@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -135,6 +136,8 @@ namespace AltV.Net.Async.Elements.Entities
                 }
             }
         }
+        
+        public List<StreamedEntityDistance> StreamedEntityDistances => GetStreamedEntities();
 
         public ushort Health
         {
@@ -950,6 +953,24 @@ namespace AltV.Net.Async.Elements.Entities
             {
                 if (!AsyncContext.CheckIfExistsNullable(Player)) return default;
                 return Player.GetWeapons();
+            }
+        }
+
+        public uint GetStreamedEntitiesCount()
+        {
+            lock (Player)
+            {
+                if (!AsyncContext.CheckIfExistsNullable(Player)) return default;
+                return Player.GetStreamedEntitiesCount();
+            }
+        }
+
+        public List<StreamedEntityDistance> GetStreamedEntities()
+        {
+            lock (Player)
+            {
+                if (!AsyncContext.CheckIfExistsNullable(Player)) return default;
+                return Player.GetStreamedEntities();
             }
         }
 
