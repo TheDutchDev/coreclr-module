@@ -330,6 +330,20 @@ namespace AltV.Net
                                     };
                                     break;
                                 }
+                                case ScriptEventType.StreamSyncedMetaDataChange:
+                                {
+                                    scriptFunction = ScriptFunction.Create(eventMethodDelegate,
+                                        new[] { typeof(IEntity), typeof(string), typeof(object) });
+                                    if (scriptFunction == null) return;
+                                    OnStreamSyncedMetaDataChange += (entity, key, value) =>
+                                    {
+                                        scriptFunction.Set(entity);
+                                        scriptFunction.Set(key);
+                                        scriptFunction.Set(value);
+                                        scriptFunction.Call();
+                                    };
+                                    break;
+                                }
                                 case ScriptEventType.ColShape:
                                 {
                                     scriptFunction = ScriptFunction.Create(eventMethodDelegate,

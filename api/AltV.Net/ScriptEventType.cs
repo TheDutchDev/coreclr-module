@@ -24,6 +24,7 @@ namespace AltV.Net
         ConsoleCommand,
         MetaDataChange,
         SyncedMetaDataChange,
+        StreamSyncedMetaDataChange,
         ColShape,
         WeaponDamage,
         VehicleDestroy,

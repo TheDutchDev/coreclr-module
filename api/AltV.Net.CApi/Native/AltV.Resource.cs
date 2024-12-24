@@ -241,6 +241,10 @@ namespace AltV.Net.Native
                 MetaChangeDelegate @delegate);
 
             [DllImport(DllName, CallingConvention = NativeCallingConvention)]
+            internal static extern void CSharpResourceImpl_SetStreamSyncedMetaChangeDelegate(IntPtr resource,
+                MetaChangeDelegate @delegate);
+
+            [DllImport(DllName, CallingConvention = NativeCallingConvention)]
             internal static extern void CSharpResourceImpl_SetColShapeDelegate(IntPtr resource,
                 ColShapeDelegate @delegate);
 

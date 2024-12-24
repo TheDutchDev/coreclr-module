@@ -201,6 +201,11 @@ namespace AltV.Net
             add => ((Core)CoreImpl).SyncedMetaDataChangeEventHandler.Add(value);
             remove => ((Core)CoreImpl).SyncedMetaDataChangeEventHandler.Remove(value);
         }
+        public static event MetaDataChangeDelegate OnStreamSyncedMetaDataChange
+        {
+            add => ((Core)CoreImpl).StreamSyncedMetaDataChangeEventHandler.Add(value);
+            remove => ((Core)CoreImpl).StreamSyncedMetaDataChangeEventHandler.Remove(value);
+        }
 
         public static event ColShapeDelegate OnColShape
         {

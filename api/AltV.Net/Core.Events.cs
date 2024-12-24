@@ -86,6 +86,9 @@ namespace AltV.Net
 
         internal readonly IEventHandler<MetaDataChangeDelegate> SyncedMetaDataChangeEventHandler =
             new HashSetEventHandler<MetaDataChangeDelegate>(EventType.SYNCED_META_CHANGE);
+        
+        internal readonly IEventHandler<MetaDataChangeDelegate> StreamSyncedMetaDataChangeEventHandler =
+            new HashSetEventHandler<MetaDataChangeDelegate>(EventType.STREAM_SYNCED_META_CHANGE);
 
         internal readonly IEventHandler<ColShapeDelegate> ColShapeEventHandler =
             new HashSetEventHandler<ColShapeDelegate>(EventType.COLSHAPE_EVENT);
@@ -957,6 +960,40 @@ namespace AltV.Net
                 catch (Exception exception)
                 {
                     Alt.Log("exception at event:" + "OnSyncedMetaDataChangeEvent" + ":" + exception);
+                }
+            }
+        }
+
+        public void OnStreamSyncedMetaDataChange(IntPtr entityPointer, BaseObjectType entityType, string key,
+            IntPtr value)
+        {
+            var entity = (IEntity)PoolManager.Get(entityPointer, entityType);
+            if (entity is null)
+            {
+                Console.WriteLine("OnStreamSyncedMetaDataChange Invalid entity " + entityPointer + " " + entityType + " " +
+                                  key + " " + value);
+                return;
+            }
+
+            OnStreamSyncedMetaDataChangeEvent(entity, key, new MValueConst(this, value).ToObject());
+        }
+
+        public virtual void OnStreamSyncedMetaDataChangeEvent(IEntity entity, string key, object value)
+        {
+            if (!StreamSyncedMetaDataChangeEventHandler.HasEvents()) return;
+            foreach (var eventHandler in StreamSyncedMetaDataChangeEventHandler.GetEvents())
+            {
+                try
+                {
+                    eventHandler(entity, key, value);
+                }
+                catch (TargetInvocationException exception)
+                {
+                    Alt.Log("exception at event:" + "OnStreamSyncedMetaDataChangeEvent" + ":" + exception.InnerException);
+                }
+                catch (Exception exception)
+                {
+                    Alt.Log("exception at event:" + "OnStreamSyncedMetaDataChangeEvent" + ":" + exception);
                 }
             }
         }

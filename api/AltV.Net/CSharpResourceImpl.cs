@@ -120,6 +120,10 @@ namespace AltV.Net
             handles.AddFirst(GCHandle.Alloc(onSyncedMetaDataChange));
             AltNative.Resource.CSharpResourceImpl_SetSyncedMetaChangeDelegate(NativePointer, onSyncedMetaDataChange);
 
+            AltNative.Resource.MetaChangeDelegate onStreamSyncedMetaDataChange = ModuleWrapper.OnStreamSyncedMetaDataChange;
+            handles.AddFirst(GCHandle.Alloc(onStreamSyncedMetaDataChange));
+            AltNative.Resource.CSharpResourceImpl_SetStreamSyncedMetaChangeDelegate(NativePointer, onStreamSyncedMetaDataChange);
+
             AltNative.Resource.ColShapeDelegate onColShape = ModuleWrapper.OnColShape;
             handles.AddFirst(GCHandle.Alloc(onColShape));
             AltNative.Resource.CSharpResourceImpl_SetColShapeDelegate(NativePointer, onColShape);

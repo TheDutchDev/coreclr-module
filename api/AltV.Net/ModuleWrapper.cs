@@ -328,6 +328,12 @@ namespace AltV.Net
             _core.OnSyncedMetaDataChange(entityPointer, entityType, key, value);
         }
 
+        public static void OnStreamSyncedMetaDataChange(IntPtr entityPointer, BaseObjectType entityType, string key,
+            IntPtr value)
+        {
+            _core.OnStreamSyncedMetaDataChange(entityPointer, entityType, key, value);
+        }
+
         public static void OnColShape(IntPtr colShapePointer, IntPtr targetEntityPointer, BaseObjectType entityType,
             byte state)
         {

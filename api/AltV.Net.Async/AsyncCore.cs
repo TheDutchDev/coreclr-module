@@ -108,6 +108,9 @@ namespace AltV.Net.Async
         internal readonly AsyncEventHandler<MetaDataChangeAsyncDelegate> SyncedMetaDataChangeAsyncEventHandler =
             new(EventType.SYNCED_META_CHANGE);
 
+        internal readonly AsyncEventHandler<MetaDataChangeAsyncDelegate> StreamSyncedMetaDataChangeAsyncEventHandler =
+            new(EventType.STREAM_SYNCED_META_CHANGE);
+
         internal readonly AsyncEventHandler<ColShapeAsyncDelegate> ColShapeAsyncEventHandler =
             new(EventType.COLSHAPE_EVENT);
 
@@ -598,6 +601,17 @@ namespace AltV.Net.Async
             Task.Run(async () =>
             {
                 await SyncedMetaDataChangeAsyncEventHandler.CallAsync(@delegate =>
+                    @delegate(entity, key, value));
+            });
+        }
+
+        public override void OnStreamSyncedMetaDataChangeEvent(IEntity entity, string key, object value)
+        {
+            base.OnStreamSyncedMetaDataChangeEvent(entity, key, value);
+            if (!StreamSyncedMetaDataChangeAsyncEventHandler.HasEvents()) return;
+            Task.Run(async () =>
+            {
+                await StreamSyncedMetaDataChangeAsyncEventHandler.CallAsync(@delegate =>
                     @delegate(entity, key, value));
             });
         }
